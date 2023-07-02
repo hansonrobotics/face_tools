@@ -19,24 +19,9 @@ from .streaming import FaceConnectROS, FaceDisconnectROS, FaceResetPoseButtonOpe
 from .recording import LoadCSVOperator, FaceStartRecordButtonOperator, FaceStopRecordButtonOperator, FaceRecordPanel
 from .utils import props
 
-props.add('faceGlobalTimerStarted', "globalTimerStarted", False)
+# Initially is not saved
+props['faceGlobalTimerStarted'] = False
 
-
-PROPS = [
-     ('faceRecording', bpy.props.BoolProperty(name = "Recording", default = False)),
-     ('faceLiveUpdatePose', bpy.props.BoolProperty(name = "liveUpdatePose", default = False)),
-     ('faceStreaming', bpy.props.BoolProperty(name = "Streaming", default = False)),
-     ('robotIP', bpy.props.StringProperty(name = "robotIP", default = '10.0.0.10')),
-     ('mirrorUpdate', bpy.props.BoolProperty(name = "Mirror Update", default = False)),
-     ('mirrorRecord', bpy.props.BoolProperty(name = "Mirror Recording", default = False)),
-     ('recordHeadMovement', bpy.props.BoolProperty(name = "Head Movement", default = True)),
-     ('recordEyeMovement', bpy.props.BoolProperty(name = "Eye Movement", default = True)), 
-     ('recordEyeLeft', bpy.props.BoolProperty(name = "Left Eye", default = True)),
-     ('recordEyeRight', bpy.props.BoolProperty(name = "Right Eye", default = True)),
-     ('recordMouth', bpy.props.BoolProperty(name = "Mouth", default = True)),
-     ('recordNostril', bpy.props.BoolProperty(name = "Nose Sneer", default = True)),
-     ('recordCheek', bpy.props.BoolProperty(name = "Cheek squint", default = True)),
-]
 
 
 # Global timer for viweport functions
@@ -53,13 +38,13 @@ class FaceBLGlobalTimer(bpy.types.Operator):
         print("START GLOBAL TIMER")
         wm = context.window_manager
         self._timer = wm.event_timer_add(1/self.maxFPS, window=context.window)
-        context.scene.faceGlobalTimerStarted = True
+        props['faceGlobalTimerStarted'] = True
         wm.modal_handler_add(self)
 
         return {'RUNNING_MODAL'}
 
     def modal(self, context, event):
-        if not context.scene.faceGlobalTimerStarted:
+        if not props['faceGlobalTimerStarted']:
             return self.cancel(context)
         return {'PASS_THROUGH'}
 

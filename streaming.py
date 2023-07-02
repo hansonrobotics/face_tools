@@ -8,7 +8,7 @@ import math
 # FROM ranimation_manager
 # Single action names that match single bone
 
-props.add('faceStreaming', "Facial Streaming", False)
+props['faceStreaming'] = False
 props.add('robotIP', "Robot IP address", '10.0.0.10')
 
 HEAD_BONES = {
@@ -109,8 +109,11 @@ class ExternalStream(metaclass=Singleton):
             pose[key] = min(1, max(-1,(self.bones[bone].location[j] * 25)))
         head = self.getHeadData()
         eyes = self.getEyesData()
+        neck = self.getNeckData()
+        print(neck)
         pose.update(head)
         pose.update(eyes)
+        pose.update(neck)
         return pose
     
     '''
@@ -138,7 +141,7 @@ class ExternalStream(metaclass=Singleton):
         rneck = bones['DEF-neck'].matrix @ Matrix.Rotation(-math.pi/2, 4, 'X')
         q = rneck.to_euler('XYZ')
         return {
-            'NeckYaw': q.z,
+            # 'NeckYaw': q.z, Not used
             'NeckPitch': q.x,
             'NeckRoll': q.y
         }
@@ -221,7 +224,7 @@ class FaceStartStreamButtonOperator(bpy.types.Operator):
 
     def execute(self, context):
         ExternalStream().streaming = True
-        if not context.scene.faceStreaming:
+        if not props['faceStreaming']:
             bpy.ops.wm.face_live_update_pose()
         return {'FINISHED'}
 
@@ -267,9 +270,9 @@ class FaceStreaming(bpy.types.Operator):
         print("START STREAMING")
         wm = context.window_manager
         wm.modal_handler_add(self)
-        if not context.scene.faceGlobalTimerStarted:
+        if not props['faceGlobalTimerStarted']:
             bpy.ops.wm.face_global_timer()
-        context.scene.faceStreaming = True
+        props['faceStreaming'] = True
         return {'RUNNING_MODAL'}
 
     def cancel(self, context):
