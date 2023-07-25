@@ -11,8 +11,8 @@ bl_info = {
 }
 import sys
 import os
-# append current directory
-sys.path.append(os.path.join(os.path.dirname(__file__), 'deps'))
+# Try the dependencies that are shared to have priority so it wont have conflict with existing deps
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'deps'))
 import bpy
 from .livelink import FaceStartPortButtonOperator, FaceSetNeutralButtonOperator, FaceToggleUpdateButtonOperator, FaceBLUpdatePose, FaceLiveLinkPanel, FaceResetNeutralButtonOperator
 from .streaming import FaceConnectROS, FaceDisconnectROS, FaceResetPoseButtonOperator, FaceStartStreamButtonOperator, FaceStopStreamButtonOperator,FaceStreamPanel, FaceStreaming
